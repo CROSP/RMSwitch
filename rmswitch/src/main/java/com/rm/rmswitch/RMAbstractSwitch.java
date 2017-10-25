@@ -12,7 +12,6 @@ import android.support.annotation.IntDef;
 import android.support.annotation.StyleableRes;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Checkable;
@@ -91,7 +90,7 @@ public abstract class RMAbstractSwitch extends RelativeLayout
      */
     protected RelativeLayout mContainerLayout;
 
-    protected static LayoutTransition sLayoutTransition;
+    protected LayoutTransition mLayoutTransition;
 
     protected static final int ANIMATION_DURATION = 150;
 
@@ -203,11 +202,11 @@ public abstract class RMAbstractSwitch extends RelativeLayout
         removeAllViews();
 
         // Create the layout transition if not already created
-        if (sLayoutTransition == null) {
-            sLayoutTransition = new LayoutTransition();
-            sLayoutTransition.setDuration(ANIMATION_DURATION);
-            sLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
-            sLayoutTransition.setInterpolator(
+        if (mLayoutTransition == null) {
+            mLayoutTransition = new LayoutTransition();
+            mLayoutTransition.setDuration(ANIMATION_DURATION);
+            mLayoutTransition.enableTransitionType(LayoutTransition.CHANGING);
+            mLayoutTransition.setInterpolator(
                     LayoutTransition.CHANGING,
                     new FastOutLinearInInterpolator());
         }
@@ -224,8 +223,8 @@ public abstract class RMAbstractSwitch extends RelativeLayout
         mContainerLayout = (RelativeLayout) findViewById(R.id.rm_switch_view_container);
 
         // Activate AnimateLayoutChanges in both the container and the root layout
-        setLayoutTransition(sLayoutTransition);
-        mContainerLayout.setLayoutTransition(sLayoutTransition);
+        setLayoutTransition(mLayoutTransition);
+        mContainerLayout.setLayoutTransition(mLayoutTransition);
     }
 
     @Override
@@ -442,6 +441,12 @@ public abstract class RMAbstractSwitch extends RelativeLayout
 
     @Override
     public void setChecked(boolean b) {
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mLayoutTransition = null;
     }
 
     @Override
